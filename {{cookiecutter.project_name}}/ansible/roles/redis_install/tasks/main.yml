@@ -1,0 +1,43 @@
+---
+{% raw %}
+- name: Download Redis
+  get_url:
+    url: http://download.redis.io/redis-stable.tar.gz
+    dest: /tmp/redis-stable.tar.gz
+  tags: redis
+
+- name: Extract Redis
+  unarchive:
+    src: /tmp/redis-stable.tar.gz
+    dest: /tmp/
+    remote_src: yes
+  tags: redis
+
+- name: Delete Redis Archive
+  file:
+    path: /tmp/redis-stable.tar.gz
+    state: absent
+  tags: redis
+
+- name: Make redis-server
+  make:
+    chdir: /tmp/redis-stable
+    target: install
+  become: yes
+  become_user: root
+  tags: redis
+
+- name: Install redis-server
+  shell: /tmp/redis-stable/utils/install_server.sh
+  become: yes
+  become_user: root
+  tags: redis
+
+- name: Remove tmp files and directories
+  file:
+    state: absent
+    path: /tmp/redis-stable/
+  become: yes
+  become_user: root
+  tags: redis
+{%- endraw %}

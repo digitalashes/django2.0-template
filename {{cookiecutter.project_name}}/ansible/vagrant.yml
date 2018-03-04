@@ -1,0 +1,22 @@
+---
+
+- name: Configure box
+  hosts: all
+  vars_files:
+    - vars/vagrant.yml
+
+  roles:
+    - { role: system }
+    - { role: git_install }
+    - { role: zsh_install }
+    - { role: python_install }
+    - { role: virtualenv }
+    - { role: postgres_install }
+    - { role: postgis_install, when: "postgis_install == true" }
+    - { role: memcached_install, when: "memcached_install == true" }
+    - { role: rabbitmq_install, when: "rabbitmq_install == true" }
+    - { role: redis_install, when: "redis_install == true" }
+    - { role: elasticsearch_install, when: "elasticsearch_install == true" }
+    - { role: post_install }
+    - { role: pip }
+    - { role: migrate }

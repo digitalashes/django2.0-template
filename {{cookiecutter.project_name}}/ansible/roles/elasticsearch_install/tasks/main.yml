@@ -1,0 +1,83 @@
+---
+{% raw %}
+- name: Add Oracle JDK Repository
+  apt_repository:
+    repo: 'ppa:webupd8team/java'
+  become: yes
+  become_user: root
+  run_once: yes
+  tags: java
+
+- name: Accept Java 8 License
+  debconf:
+    name: 'oracle-java8-installer'
+    question: 'shared/accepted-oracle-license-v1-1'
+    value: 'true'
+    vtype: 'select'
+  become: yes
+  tags: java
+
+- name: Install Java 8
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - oracle-java8-installer
+    - ca-certificates
+    - oracle-java8-set-default
+  become: yes
+  become_user: root
+  run_once: yes
+  tags: java
+
+- name: Download ElasticSearch package
+  get_url:
+    url: https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.2.2.deb
+    dest: /tmp/elasticsearch.deb
+  tags: elasticsearch
+
+- name: Install ElasticSearch
+  apt:
+    deb: /tmp/elasticsearch.deb
+  become: yes
+  become_user: root
+  tags: elasticsearch
+
+- name: Delete ElasticSearch package
+  file:
+    path: /tmp/elasticsearch.deb
+    state: absent
+  tags: elasticsearch
+
+- name: Set ElasticSearch cluster name
+  lineinfile:
+    dest: /etc/elasticsearch/elasticsearch.yml
+    regexp: ^#\s*cluster.name:.*$
+    line: "cluster.name: {{ project_name }}"
+    backrefs: yes
+  run_once: yes
+  become: yes
+  become_user: root
+  tags: elasticsearch
+
+- name: Set ElasticSearch node name
+  lineinfile:
+    dest: /etc/elasticsearch/elasticsearch.yml
+    regexp: ^#\s*node.name:.*$
+    line: "node.name: {{ project_name }}-node1"
+    backrefs: yes
+  run_once: yes
+  become: yes
+  become_user: root
+  tags: elasticsearch
+
+- name: Enable ElasticSearch Service
+  systemd:
+    name: elasticsearch.service
+    enabled: yes
+    state: started
+  become: yes
+  become_user: root
+  tags: elasticsearch
+{%- endraw %}

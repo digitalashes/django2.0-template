@@ -1,0 +1,54 @@
+---
+{% raw %}
+- name: Update System
+  apt:
+    update_cache: yes
+    upgrade: dist
+    autoclean: yes
+    autoremove: yes
+  become: yes
+  become_user: root
+  tags: system
+
+- name: Install Base Packages
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - bash
+    - build-essential
+    - curl
+    - htop
+    - libffi-dev
+    - libfreetype6-dev
+    - libjpeg8-dev
+    - liblcms2-dev
+    - libpq-dev
+    - libssl-dev
+    - libssl-doc
+    - libtiff5-dev
+    - libwebp-dev
+    - libxml2-dev
+    - libxslt1-dev
+    - openssl
+    - python-pycurl
+    - python-software-properties
+    - tcl8.5-dev
+    - tk8.5-dev
+    - zlib1g-dev
+    - gettext
+  become: yes
+  become_user: root
+  tags: system
+
+- name: Create .aliases
+  blockinfile:
+    create: yes
+    dest: "~/.aliases"
+    block: |
+      alias pi='pip install'
+      alias pf='pip freeze | grep '
+    state: present
+  tags: system
+{%- endraw %}

@@ -1,0 +1,80 @@
+---
+{% raw %}
+- name: Add Apt Repository for RabbitMQ
+  apt_repository:
+    repo: 'deb https://dl.bintray.com/rabbitmq/debian xenial main'
+    state: present
+  become: yes
+  become_user: root
+  tags: rabbitmq
+
+- name: Add Apt Key for RabbitMQ
+  apt_key:
+    url: 'https://dl.bintray.com/rabbitmq/Keys/rabbitmq-release-signing-key.asc'
+    state: present
+  become: yes
+  become_user: root
+  tags: rabbitmq
+
+- name: Add Apt Repository for Erlang
+  apt_repository:
+    repo: "deb http://packages.erlang-solutions.com/debian xenial contrib"
+    state: present
+  become: yes
+  become_user: root
+  tags: rabbitmq_erlang
+
+- name: Add Apt Key for Erlang
+  apt_key:
+    url: 'http://packages.erlang-solutions.com/debian/erlang_solutions.asc'
+    state: present
+  become: yes
+  become_user: root
+  tags: rabbitmq_erlang
+
+- name: Update Apt Cache
+  apt:
+    update_cache: yes
+  become: yes
+  become_user: root
+  tags: rabbitmq
+
+- name: Install erlang-nox
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - erlang-nox
+  become: yes
+  become_user: root
+  tags: rabbitmq_erlang
+
+- name: Install erlang-dev
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - erlang-dev
+  become: yes
+  become_user: root
+  tags: rabbitmq_erlang
+
+- name: Install RabbitMQ Server
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - rabbitmq-server
+  become: yes
+  become_user: root
+  tags: rabbitmq
+
+- name: Enable RabbitMQ Service
+  service:
+    name: rabbitmq-server
+    enabled: yes
+    state: started
+  become: yes
+  become_user: root
+  tags: rabbitmq
+{%- endraw %}

@@ -1,0 +1,13 @@
+{
+  "project_name": "project_name",
+  "use_postgis": "n",
+  "use_memcached": "y",
+  "use_celery": "y",
+  "use_rabbitmq": "y",
+  "use_redis": "y",
+  "use_elasticsearch": "y",
+  "use_allauth": "y",
+  "use_rest": "y",
+  "use_cors": "y",
+  "use_constance": "y"
+}

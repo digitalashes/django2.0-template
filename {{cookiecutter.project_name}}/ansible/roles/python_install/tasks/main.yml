@@ -1,0 +1,28 @@
+---
+{% raw %}
+- name: Add Python Repository
+  apt_repository:
+    repo: 'ppa:deadsnakes/ppa'
+  become: yes
+  become_user: root
+  run_once: yes
+  tags: python
+
+- name: Install Python
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "python{{ python_version }}"
+    - "python{{ python_version }}-dbg"
+    - "python{{ python_version }}-dev"
+    - "python{{ python_version }}-doc"
+    - "python{{ python_version }}-minimal"
+    - "python{{ python_version }}-tk"
+    - "python{{ python_version }}-venv"
+  become: yes
+  become_user: root
+  run_once: yes
+  tags: python
+{%- endraw %}

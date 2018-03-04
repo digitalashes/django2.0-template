@@ -1,0 +1,10 @@
+---
+{% raw %}
+- name: Migrate DB
+  django_manage:
+    command: migrate
+    app_path: "{{ project_path }}"
+    settings: "{{ django_settings }}"
+    virtualenv: "{{ virtualenv_path }}"
+  tags: migrate
+{%- endraw %}

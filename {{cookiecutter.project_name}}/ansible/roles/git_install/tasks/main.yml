@@ -1,0 +1,19 @@
+---
+{% raw %}
+- name: Add Git Repository
+  apt_repository:
+    repo: 'ppa:git-core/ppa'
+  become: yes
+  become_user: root
+  run_once: yes
+  tags: git
+
+- name: Install/Update Git
+  apt:
+    update_cache: yes
+    name: git
+    state: latest
+  become: yes
+  become_user: root
+  tags: git
+{%- endraw %}

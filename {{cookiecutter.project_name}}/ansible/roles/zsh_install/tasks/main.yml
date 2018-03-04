@@ -1,0 +1,52 @@
+---
+{% raw %}
+- name: Install zsh
+  apt:
+    name: zsh
+    state: latest
+  become: yes
+  become_user: root
+  tags: zsh
+
+- name: Change shell
+  user:
+    name: vagrant
+    shell: /usr/bin/zsh
+  state: present
+  become: yes
+  become_user: root
+  tags: zsh
+
+- name: Download Oh my zsh
+  git:
+    repo: 'git://github.com/robbyrussell/oh-my-zsh.git'
+    dest: ~/.oh-my-zsh
+    clone: yes
+
+- name: Create .zshrc
+  copy:
+    src: ~/.oh-my-zsh/templates/zshrc.zsh-template
+    dest: ~/.zshrc
+    force: no
+  state: present
+  tags: zsh
+
+- name: Update .zshrc
+  blockinfile:
+    dest: "~/.zshrc"
+    block: |
+      if [ -f ~/.aliases ]; then
+        . ~/.aliases
+      fi
+
+      if [ -d "$HOME/venv" ] ; then
+          source $HOME/venv/bin/activate
+      fi
+
+      export DJANGO_SETTINGS_MODULE="{{ django_settings }}"
+
+      cd /vagrant
+
+    state: present
+  tags: zsh
+{%- endraw %}

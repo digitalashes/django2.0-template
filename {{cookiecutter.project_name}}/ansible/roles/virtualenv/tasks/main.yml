@@ -1,0 +1,25 @@
+---
+{% raw %}
+- name: Check virtualenv
+  stat: path={{ virtualenv_path }}/bin/python
+  register: bin_virtualenv
+  tags: virtualenv
+
+- name: Create python virtual environment
+  shell: "python{{ python_version }} -m venv {{ virtualenv_path }}"
+  when: not bin_virtualenv.stat.exists
+  become: no
+  tags: virtualenv
+
+- name: Upgrade pip and setuptools
+  pip:
+    name: "{{ item }}"
+    executable: "{{ virtualenv_path }}/bin/pip"
+    state: latest
+  with_items:
+    - pip
+    - setuptools
+    - wheel
+  become: no
+  tags: virtualenv
+{%- endraw %}

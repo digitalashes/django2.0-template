@@ -1,0 +1,35 @@
+---
+{% raw %}
+- name: Install PostGIS
+  apt:
+    update_cache: yes
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - "postgis"
+    - "postgresql-{{ postgres_version }}-postgis-2.3"
+    - "postgresql-contrib-{{ postgres_version }}"
+    - "postgresql-{{ postgres_version }}-postgis-scripts"
+    - "postgresql-{{ postgres_version }}-pgrouting"
+  become: yes
+  become_user: root
+  tags: postgis
+
+- name: Enable Adminpack
+  command: psql -d "{{ db_name }}" -c "CREATE EXTENSION adminpack;"
+  ignore_errors: yes
+  become: yes
+  become_user: postgres
+  tags: postgis
+
+- name: Enable PostGIS
+  command: "{{ item }}"
+  with_items:
+    - psql -d "{{ db_name }}" -c "CREATE SCHEMA postgis;"
+    - psql -d "{{ db_name }}" -c "ALTER DATABASE {{ db_name }} SET search_path=public, postgis, contrib;"
+    - psql -d "{{ db_name }}" -c "CREATE EXTENSION postgis SCHEMA postgis;"
+    - psql -d "{{ db_name }}" -c "CREATE  EXTENSION pgrouting;"
+  become: yes
+  become_user: postgres
+  tags: postgis
+{%- endraw %}
