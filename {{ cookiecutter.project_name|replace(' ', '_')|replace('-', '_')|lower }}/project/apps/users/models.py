@@ -52,6 +52,7 @@ class User(PermissionsMixin, AbstractBaseUser):
             models.Index(fields=['email', 'last_name', 'first_name']),
         )
 
+    {%- if cookiecutter.use_allauth == "y" %}
     @property
     def primary_email(self):
         return self.emailaddress_set.filter(primary=True).first()
@@ -60,6 +61,7 @@ class User(PermissionsMixin, AbstractBaseUser):
     def is_email_verified(self):
         email = self.primary_email
         return email.verified if email else False
+    {%- endif %}
 
     @property
     def get_full_name(self):

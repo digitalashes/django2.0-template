@@ -71,7 +71,6 @@ env = environ.Env(
     JWT_REFRESH_EXPIRATION_DELTA=(int, 604800),
     {%- endif %}
 
-
     DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
     DJANGO_DEBUG_SQL=(bool, False),
     DJANGO_DEBUG_SQL_COLOR=(bool, False),
