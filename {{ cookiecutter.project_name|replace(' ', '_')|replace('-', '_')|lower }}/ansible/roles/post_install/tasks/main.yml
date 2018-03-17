@@ -6,6 +6,15 @@
     dest: "{{ django_settings_path }}/.env"
   tags: .env
 
+- name: Set DJANGO_DEBUG
+  lineinfile:
+    dest: "{{ django_settings_path }}/.env"
+    regexp: ^\s*DJANGO_DEBUG=off.*$
+    line: "DJANGO_DEBUG=on"
+    backrefs: yes
+  run_once: yes
+  tags: .env
+
 - name: Set DJANGO_DATABASE_URL PostgreSQL
   lineinfile:
     dest: "{{ django_settings_path }}/.env"
