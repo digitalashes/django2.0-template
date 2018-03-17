@@ -1,0 +1,30 @@
+---
+
+project_name: {{ cookiecutter.project_name|replace(' ', '_')|replace('-', '_')|lower }}
+
+{% raw -%}
+# Database settings.
+db_name: "{{ project_name }}"
+db_user: "vagrant"
+db_password: "vagrant"
+
+# Application settings.
+virtualenv_path: "/home/vagrant/venv"
+project_path: "/vagrant"
+requirements_file: "{{ project_path }}/requirements/local.txt"
+django_settings_path: "{{ project_path }}/config"
+django_settings: "config.settings"
+{%- endraw %}
+
+# Python version
+python_version: 3.6
+
+# PostgreSQL version
+postgres_version: 9.6
+
+# Services
+postgis_install: {% if cookiecutter.use_postgis == "y" %}true{% else %}false{% endif %}
+memcached_install: {% if cookiecutter.use_memcached == "y" %}true{% else %}false{% endif %}
+rabbitmq_install: {% if cookiecutter.use_rabbitmq == "y" %}true{% else %}false{% endif %}
+redis_install: {% if cookiecutter.use_redis == "y" %}true{% else %}false{% endif %}
+elasticsearch_install: {% if cookiecutter.use_elasticsearch == "y" %}true{% else %}false{% endif %}

@@ -1,8 +1,24 @@
 import os
 import shutil
+from subprocess import Popen
 
 # Get the root project directory
 PROJECT_DIRECTORY = os.path.realpath(os.path.curdir)
+
+
+def init_git():
+    """
+    Initialises git on the new project folder
+    """
+    GIT_COMMANDS = [
+        ["git", "init"],
+        ["git", "add", "."],
+        ["git", "commit", "-a", "-m", "Initial Commit."]
+    ]
+
+    for command in GIT_COMMANDS:
+        git = Popen(command, cwd=PROJECT_DIRECTORY)
+        git.wait()
 
 
 def remove_task_app():
@@ -49,3 +65,5 @@ if '{{ cookiecutter.use_rest }}'.lower() == 'n':
 
 if '{{ cookiecutter.use_allauth }}'.lower() == 'n':
     remove_allauth_files()
+
+init_git()
