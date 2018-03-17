@@ -54,16 +54,23 @@ env = environ.Env(
     DJANGO_STATIC_ROOT=(str, str(APPS_DIR.path('staticfiles').root)),
     DJANGO_MEDIA_ROOT=(str, str(APPS_DIR.path('media').root)),
 
+    {%- if cookiecutter.use_cors == "y" %}
     CORS_ORIGIN_WHITELIST=(list, []),
+    {%- endif %}
 
+    {%- if cookiecutter.use_allauth == "y" %}
     ALLAUTH_USERNAME_BLACKLIST=(list, []),
     ALLAUTH_CONFIRMATION_EXPIRE_DAYS=(int, 3),
     ALLAUTH_LOGIN_ATTEMPTS_LIMIT=(int, 5),
     ALLAUTH_LOGIN_ATTEMPTS_TIMEOUT=(int, 300),
+    {%- endif %}
 
+    {%- if cookiecutter.use_rest == "y" %}
     JWT_SECRET_KEY=(str, secrets.token_urlsafe(50)),
     JWT_EXPIRATION_DELTA=(int, 300),
     JWT_REFRESH_EXPIRATION_DELTA=(int, 604800),
+    {%- endif %}
+
 
     DJANGO_USE_DEBUG_TOOLBAR=(bool, False),
     DJANGO_DEBUG_SQL=(bool, False),
@@ -72,10 +79,12 @@ env = environ.Env(
     DJANGO_USE_SILK=(bool, False),
     DJANGO_SENTRY_DSN=(str, ''),
 
+    {%- if cookiecutter.use_celery == "y" %}
     CELERY_ALWAYS_EAGER=(bool, False),
     CELERY_RESULT_BACKEND=(str, 'django-db'),
     CELERY_BROKER_URL=(str, 'amqp://'),
     CELERY_IGNORE_RESULT=(bool, True),
+    {%- endif %}
 )
 
 environ.Env.read_env()
@@ -231,7 +240,9 @@ AUTH_USER_MODEL = 'users.User'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
+    {%- if cookiecutter.use_allauth == 'y' %}
     'allauth.account.auth_backends.AuthenticationBackend',
+    {%- endif %}
 )
 
 LOGIN_REDIRECT_URL = '/'
@@ -576,11 +587,11 @@ JWT_AUTH = {
         datetime.timedelta(seconds=env.int('JWT_EXPIRATION_DELTA')),
     'JWT_AUDIENCE': None,
     'JWT_ISSUER': None,
-    'JWT_ALLOW_REFRESH': False,
+    'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA':
         datetime.timedelta(seconds=env.int('JWT_REFRESH_EXPIRATION_DELTA')),
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    'JWT_AUTH_COOKIE': None,
+    'JWT_AUTH_COOKIE': True,
 }
 {% endif %}
 ##############################################################################

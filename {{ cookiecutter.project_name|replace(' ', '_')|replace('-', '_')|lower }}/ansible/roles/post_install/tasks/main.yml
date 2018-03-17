@@ -10,7 +10,7 @@
   lineinfile:
     dest: "{{ django_settings_path }}/.env"
     regexp: ^\s*DJANGO_DATABASE_URL=sqlite://.*$
-    line: "DJANGO_DATABASE_URL=postgres:///{{ project_name }}"
+    line: "DJANGO_DATABASE_URL=postgres:///{{ db_name }}"
     backrefs: yes
   run_once: yes
   when: "postgis_install == false"
@@ -20,33 +20,37 @@
   lineinfile:
     dest: "{{ django_settings_path }}/.env"
     regexp: ^\s*DJANGO_DATABASE_URL=sqlite://.*$
-    line: "DJANGO_DATABASE_URL=postgis:///{{ project_name }}"
+    line: "DJANGO_DATABASE_URL=postgis:///{{ db_name }}"
     backrefs: yes
   run_once: yes
   when: "postgis_install == true"
   tags: .env
 
-- name: Set DJANGO_DEBUG
-  lineinfile:
-    dest: "{{ django_settings_path }}/.env"
-    regexp: ^\s*DJANGO_DEBUG=False.*$
-    line: "DJANGO_DEBUG=True"
-    backrefs: yes
-  run_once: yes
-  tags: .env
-
-- name: Generate Secret Key
+- name: Generate Secret Key For Django
   command: "{{ virtualenv_path }}/bin/python -c 'import secrets; print(secrets.token_urlsafe(50))'"
-  register: sk
+  register: dj_sk
   tags: .env
 
 - name: Set DJANGO_SECRET_KEY
   lineinfile:
     dest: "{{ django_settings_path }}/.env"
-    regexp: ^\s*DJANGO_SECRET_KEY=.*$
-    line: "DJANGO_SECRET_KEY={{ sk.stdout }}"
+    regexp: ^\s*#DJANGO_SECRET_KEY=.*$
+    line: "DJANGO_SECRET_KEY={{ dj_sk.stdout }}"
     backrefs: yes
   run_once: yes
   tags: .env
 
+- name: Generate Secret Key For JWT
+  command: "{{ virtualenv_path }}/bin/python -c 'import secrets; print(secrets.token_urlsafe(50))'"
+  register: jwt_sk
+  tags: .env
+
+- name: Set JWT_SECRET_KEY
+  lineinfile:
+    dest: "{{ django_settings_path }}/.env"
+    regexp: ^\s*#JWT_SECRET_KEY=.*$
+    line: "JWT_SECRET_KEY={{ jwt_sk.stdout }}"
+    backrefs: yes
+  run_once: yes
+  tags: .env
 {%- endraw %}

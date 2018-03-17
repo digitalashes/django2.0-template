@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
 	####System Resources
 		develop.vm.hostname = "develop"
             develop.vm.provider "virtualbox" do |v|
-                v.memory = 2048
+                v.memory = {% if cookiecutter.use_elasticsearch == "y" %}2048{% else %}1024{% endif %}
                 v.cpus = 1
             end
 	end

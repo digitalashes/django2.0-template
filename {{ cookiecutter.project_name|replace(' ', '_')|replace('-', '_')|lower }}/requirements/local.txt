@@ -20,5 +20,3 @@ pytest-html>=1.16.1
 pytest-pep8>=1.0.6
 pytest-quickcheck>=0.8.3
 pytest-xdist>=1.22.0
-
-
