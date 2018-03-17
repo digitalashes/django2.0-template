@@ -1,4 +1,6 @@
+{%- if cookiecutter.use_allauth == "y" %}
 from allauth.account.models import EmailAddress
+{%- endif %}
 from django import forms
 from django.contrib import admin
 from django.contrib.auth import get_user_model
@@ -9,12 +11,12 @@ from django.utils.translation import ugettext_lazy as _
 
 User = get_user_model()
 
-
+{%- if cookiecutter.use_allauth == "y" %}
 class EmailAddressStackedInline(admin.StackedInline):
     model = EmailAddress
     fields = ('email', 'verified', 'primary',)
     extra = 0
-
+{%- endif %}
 
 class UserChangeForm(UserChangeFormBase):
     class Meta(UserChangeFormBase.Meta):
@@ -44,7 +46,9 @@ class UserCreationForm(UserCreationFormBase):
 class UserAdmin(AuthUserAdmin):
     add_form = UserCreationForm
     form = UserChangeForm
+    {%- if cookiecutter.use_allauth == "y" %}
     inlines = (EmailAddressStackedInline,)
+    {%- endif %}
     list_display = ('email', 'first_name', 'last_name', 'is_staff', 'is_active', 'last_login', 'date_joined')
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups')
     ordering = ('email',)
